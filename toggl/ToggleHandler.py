@@ -12,14 +12,19 @@ def _create_auth():
     return requests.auth.HTTPBasicAuth(token, 'api_token')
 
 
-def _toggl(url, method, data=None, headers={'content-type': 'application/json'}):
+def _toggl(url, method, data=None, headers={'content-type': 'application/json'}, params=None):
     """
     Makes an HTTP request to toggl.com. Returns the raw text data received.
     """
     r = None
     try:
-        if method == 'get':
-            r = requests.get(url, auth=_create_auth(), data=data, headers=headers)
+        if method == 'delete':
+            r = requests.delete(url, auth=_create_auth(), data=data, headers=headers)
+        elif method == 'get':
+            if params:
+                r = requests.get(url, auth=_create_auth(), data=data, headers=headers, params=params)
+            else:
+                r = requests.get(url, auth=_create_auth(), data=data, headers=headers)
         elif method == 'post':
             r = requests.post(url, auth=_create_auth(), data=data, headers=headers)
         else:
@@ -38,6 +43,7 @@ pids = None
 
 
 def _init_wids():
+    global wids
     wids = {}
     result = _toggl("%s/workspaces" % TOGGL_URL, "get")
     workspace_list = json.loads(result)
@@ -46,13 +52,14 @@ def _init_wids():
 
 
 def _init_pids():
+    global pids
     pids = {}
-    for wname, wid in wids:
-        pids[wid] = {}
-        result = _toggl("%s/workspaces/%s/projects" % (TOGGL_URL, wid), 'get')
+    for key in wids:
+        pids[wids[key]] = {}
+        result = _toggl("%s/workspaces/%s/projects" % (TOGGL_URL, wids[key]), 'get')
         project_list = json.loads(result)
         for project in project_list:
-            pids[wid][project['name']] = project['id']
+            pids[wids[key]][project['name']] = project['id']
 
 
 class ArgumentException(Exception):
@@ -110,3 +117,81 @@ def calculate_duration(start, stop):
     stoptime = datetime.strptime(stop.split("+")[0], format)
     diff = stoptime - starttime
     return diff.total_seconds()
+
+
+def delete_time_entry(id):
+    _toggl("%s/time_entries/%s" % (TOGGL_URL, id), "delete")
+
+
+def _get_time_entries(start_date, end_date):
+    # GET "https://www.toggl.com/api/v8/time_entries?start_date=2013-03-10T15%3A42%3A46%2B02%3A00&end_date=2013-03-12T15%3A42%3A46%2B02%3A00"
+    result = _toggl("%s/time_entries?start_date=%s=%s" % (TOGGL_URL, start_date, end_date))
+    entry_list = json.loads(result)
+    return entry_list
+
+
+def get_time_entries(start_date, end_date, workspace, project=None):
+    entries = []
+    wid = _search_wid(workspace)
+    if project:
+        pid = _search_pid(wid, project)
+    for entry in _get_time_entries(start_date, end_date):
+        if not wid == entry['wid']:
+            continue
+        if project and not pid == entry['pid']:
+            continue
+        entries.append(entry)
+
+
+class FilterException(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+
+class Filter:
+    def __init__(self, workspace):
+        self.data = {
+            'user_agent': 'tjen.wellens@gmail.com',
+            'workspace_id': _search_wid(workspace),
+        }
+
+    def create_params(self):
+        if len(self.data) < 3:
+            raise FilterException("too few filtering, would remove everything from workspace: %s" % str(self.data))
+        return self.data
+
+    def add_projects_filter(self, project_names=None):
+        # project_names =
+        # comma seperated list of names
+        # None for project-less
+        # do not set projects-filter if you want to get all entries (!= None)
+        if project_names is None:
+            self.data['project_ids'] = 0
+        else:
+            project_ids = []
+            for project_name in project_names.split(','):
+                project_ids.append(str(_search_pid(self.data['workspace_id'], project_name)))
+            self.data['project_ids'] = ','.join(project_ids)
+
+    def add_since_filter(self, since):
+        self.data['since'] = since
+
+
+def filter_entries(filter):
+    entries = []
+    url = "https://toggl.com/reports/api/v2/details"
+    page_counter = 0
+    params = filter.create_params()
+
+    while True:
+        page_counter += 1
+        params['page'] = page_counter
+        result = _toggl(url, "get", params=params)
+        response_parsed = json.loads(result)
+        if not response_parsed['data']:
+            break
+        entries.extend(response_parsed['data'])
+
+    return entries
+
+
