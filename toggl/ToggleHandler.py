@@ -33,21 +33,48 @@ def _toggl(url, method, data=None, headers={'content-type': 'application/json'})
         # sys.exit(1)
 
 
-wids = {'GreaterThan': 842319}
-pids = {'TestGcal2Toggl': 8959825}
+wids = None
+pids = None
+
+
+def _init_wids():
+    wids = {}
+    result = _toggl("%s/workspaces" % TOGGL_URL, "get")
+    workspace_list = json.loads(result)
+    for workspace in workspace_list:
+        wids[workspace['name']] = workspace['id']
+
+
+def _init_pids():
+    pids = {}
+    for wname, wid in wids:
+        pids[wid] = {}
+        result = _toggl("%s/workspaces/%s/projects" % (TOGGL_URL, wid), 'get')
+        project_list = json.loads(result)
+        for project in project_list:
+            pids[wid][project['name']] = project['id']
+
+
+class ArgumentException(Exception):
+    def __init__(self, message):
+        self.message = message
 
 
 def _search_wid(workspace_name):
+    if wids is None:
+        _init_wids()
     wid = wids.get(workspace_name, None)
     if wid is None:
-        wid = -1
+        raise ArgumentException("Workspace with name '%s' not found" % workspace_name)
     return wid
 
 
-def _search_pid(project_name):
-    pid = pids.get(project_name, None)
+def _search_pid(wid, project_name):
+    if pids is None:
+        _init_pids()
+    pid = pids.get(wid, {}).get(project_name, None)
     if pid is None:
-        pid = -1
+        raise ArgumentException("Project with name '%s' not found" % project_name)
     return pid
 
 
