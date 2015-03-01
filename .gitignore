@@ -3,3 +3,5 @@ syntax: glob
 *~
 *.pyc
 !.gitignore
+google/client_secrets.json
+calendar.dat

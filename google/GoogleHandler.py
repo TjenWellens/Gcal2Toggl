@@ -51,15 +51,15 @@ def event_matches_filters(event, summary, start, end):
 
 def search_events(service, calendarName, summary, start=None, end=None):
     calendar_id = get_calendar_id(service, calendarName)
-    print "calendar_id: %s" % calendar_id
-    counter = 0
+    # print "calendar_id: %s" % calendar_id
+    # counter = 0
     selected_events = []
     try:
         page_token = None
         while True:
             events = service.events().list(calendarId=calendar_id, pageToken=page_token).execute()
             for event in events['items']:
-                counter += 1
+                # counter += 1
                 if event_matches_filters(event, summary, start, end):
                     selected_events.append(event)
                     # print event['summary']
@@ -69,7 +69,7 @@ def search_events(service, calendarName, summary, start=None, end=None):
     except client.AccessTokenRefreshError:
         print ('The credentials have been revoked or expired, please re-run'
                'the application to re-authorize.')
-    print "counter: %s" % counter
+    # print "counter: %s" % counter
     return selected_events
 
 
@@ -88,6 +88,6 @@ def main(argv):
 def create_service():
     # Authenticate and construct service.
     service, flags = sample_tools.init(
-        sys.argv, 'calendar', 'v3', __doc__, __file__,
+        [], 'calendar', 'v3', __doc__, __file__,
         scope='https://www.googleapis.com/auth/calendar.readonly')
     return service
