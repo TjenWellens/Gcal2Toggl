@@ -1,0 +1,40 @@
+[
+  {
+    "id": 821336,
+    "name": "Spexxlol's workspace",
+    "premium": false,
+    "admin": true,
+    "default_hourly_rate": 0,
+    "default_currency": "USD",
+    "only_admins_may_create_projects": false,
+    "only_admins_see_billable_rates": false,
+    "only_admins_see_team_dashboard": false,
+    "projects_billable_by_default": true,
+    "rounding": 0,
+    "rounding_minutes": 0,
+    "api_token": "d8f4e53358d8c857f9afbeca9f8f88d8",
+    "at": "2015-02-26T17:14:28+00:00",
+    "logo_url": "https://assets.toggl.com/images/workspace.jpg",
+    "ical_enabled": true,
+    "campaign_taken": false
+  },
+  {
+    "id": 842319,
+    "name": "GreaterThan",
+    "premium": false,
+    "admin": true,
+    "default_hourly_rate": 0,
+    "default_currency": "USD",
+    "only_admins_may_create_projects": false,
+    "only_admins_see_billable_rates": false,
+    "only_admins_see_team_dashboard": true,
+    "projects_billable_by_default": true,
+    "rounding": 0,
+    "rounding_minutes": 0,
+    "api_token": "eb291bb5647bc27a4056f0b8e3b296a5",
+    "at": "2015-03-01T07:29:16+00:00",
+    "logo_url": "https://assets.toggl.com/images/workspace.jpg",
+    "ical_enabled": true,
+    "campaign_taken": false
+  }
+]

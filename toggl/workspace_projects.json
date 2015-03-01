@@ -1,0 +1,71 @@
+[
+  {
+    "id": 8959825,
+    "wid": 842319,
+    "name": "TestGcal2Toggl",
+    "billable": false,
+    "is_private": true,
+    "active": true,
+    "template": false,
+    "at": "2015-03-01T11:40:33+00:00",
+    "created_at": "2015-03-01T11:37:18+00:00",
+    "color": "4",
+    "auto_estimates": false
+  },
+  {
+    "id": 8959276,
+    "wid": 842319,
+    "cid": 16278786,
+    "name": "Marketing",
+    "billable": false,
+    "is_private": true,
+    "active": true,
+    "template": false,
+    "at": "2015-03-01T07:45:12+00:00",
+    "created_at": "2015-03-01T07:40:26+00:00",
+    "color": "12",
+    "auto_estimates": false
+  },
+  {
+    "id": 8959281,
+    "wid": 842319,
+    "cid": 16278786,
+    "name": "Maxerva",
+    "billable": false,
+    "is_private": true,
+    "active": true,
+    "template": false,
+    "at": "2015-03-01T07:43:55+00:00",
+    "created_at": "2015-03-01T07:43:55+00:00",
+    "color": "0",
+    "auto_estimates": false
+  },
+  {
+    "id": 8959244,
+    "wid": 842319,
+    "cid": 16278744,
+    "name": "StockScraper",
+    "billable": false,
+    "is_private": true,
+    "active": true,
+    "template": false,
+    "at": "2015-03-01T07:38:02+00:00",
+    "created_at": "2015-03-01T07:24:02+00:00",
+    "color": "1",
+    "auto_estimates": false
+  },
+  {
+    "id": 8959251,
+    "wid": 842319,
+    "cid": 16278745,
+    "name": "DeIBapp",
+    "billable": false,
+    "is_private": true,
+    "active": true,
+    "template": false,
+    "at": "2015-03-01T07:37:14+00:00",
+    "created_at": "2015-03-01T07:27:16+00:00",
+    "color": "3",
+    "auto_estimates": false
+  }
+]
